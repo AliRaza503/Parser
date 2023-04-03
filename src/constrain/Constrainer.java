@@ -283,6 +283,31 @@ public class Constrainer extends ASTVisitor {
     }
 
     @Override
+    public Object visitUnlessTree(AST t) {
+        if (t.getKid(1).accept(this) != boolTree) {
+            constraintError(ConstrainerErrors.BadConditional);
+        }
+        t.getKid(2).accept(this);
+        return null;
+    }
+
+    //TODO: must be implemented
+    @Override
+    public Object visitSelectTree(AST t) {
+        return null;
+    }
+
+    @Override
+    public Object visitSelectBlockTree(AST t) {
+        return null;
+    }
+
+    @Override
+    public Object visitSelectorTree(AST t) {
+        return null;
+    }
+
+    @Override
     public Object visitWhileTree(AST t) {
         if (t.getKid(1).accept(this) != boolTree) {
             constraintError(ConstrainerErrors.BadConditional);
@@ -343,13 +368,23 @@ public class Constrainer extends ASTVisitor {
         return intTree;
     }
 
+    //TODO: visitStringTree should return something
     @Override
     public Object visitStringTree(AST t) {
+        decorate(t, new StringTypeTree());
         return null;
     }
 
+
+    /**
+     * When we visit a node in the HexTree, we add the decimal value of that node to the cumulative value of its parent node (which is stored in the IntTree).
+     * This way, we can keep track of the decimal value of each node in the HexTree and calculate the total decimal value of the entire tree.
+     * @param t
+     * @return
+     */
     @Override
     public Object visitHexTree(AST t) {
+        decorate(t, intTree);
         return null;
     }
 

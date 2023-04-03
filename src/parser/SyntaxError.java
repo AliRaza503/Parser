@@ -3,11 +3,14 @@ package parser;
 import lexer.Token;
 import lexer.Tokens;
 
+import java.io.Serial;
+
 public class SyntaxError extends Exception {
 
+    @Serial
     private static final long serialVersionUID = 1L;
-    private Token tokenFound;
-    private Tokens kindExpected;
+    private final Token tokenFound;
+    private final Tokens kindExpected;
 
     /**
      * record the syntax error just encountered

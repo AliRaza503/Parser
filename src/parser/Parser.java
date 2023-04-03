@@ -26,12 +26,15 @@ import lexer.*;
  * Types:
  * TYPE -> 'int'
  * TYPE -> 'boolean'
+ * TYPE -> 'string'
+ * TYPE -> 'hex'
  *
  * Formal Parameter List:
  * FUNCHEAD -> '(' (D list ',')? ')'
  *
  * Statements:
  * S -> 'if' E 'then' BLOCK 'else' BLOCK
+ * S -> 'if' E 'then' BLOCK
  * S -> 'while' E BLOCK
  * S -> 'return' E
  * S -> BLOCK
@@ -60,6 +63,8 @@ import lexer.*;
  * F -> '(' E ')'
  * F -> NAME
  * F -> <int>
+ * F -> <string>
+ * F -> <hex>
  * F -> NAME '(' (E list ',')? ')'
  *
  * Identifier:
@@ -73,7 +78,9 @@ public class Parser {
             Tokens.Equal,
             Tokens.NotEqual,
             Tokens.Less,
-            Tokens.LessEqual);
+            Tokens.LessEqual,
+            Tokens.Greater,
+            Tokens.GreaterEqual);
     private EnumSet<Tokens> addingOps = EnumSet.of(
             Tokens.Plus,
             Tokens.Minus,
@@ -81,6 +88,7 @@ public class Parser {
     private EnumSet<Tokens> multiplyingOps = EnumSet.of(
             Tokens.Multiply,
             Tokens.Divide,
+            Tokens.Modulo,
             Tokens.And);
 
     /**
@@ -142,6 +150,38 @@ public class Parser {
     }
 
     /**
+     * Selector:
+     * SELECTOR -> '{' E '}' '->' BLOCK
+     * @return selector tree
+     * @exception SyntaxError - thrown for any syntax error e.g. an expected
+     *                        expression isn't found
+     */
+    public AST rSelector() throws SyntaxError {
+        expect(Tokens.LeftBracket);
+        AST t = new SelectorTree();
+        t.addKid(rExpr());
+        expect(Tokens.RightBracket);
+        expect(Tokens.Arrow);
+        t.addKid(rBlock());
+        return t;
+    }
+    /** Select blocks SELECT_BLOCK -> '{' SELECTOR+ '}'
+     *  @return select block tree
+     * @exception SyntaxError - thrown for any syntax error e.g. an expected
+     *                        left brace isn't found
+     */
+    public AST rSelectBlock() throws SyntaxError {
+        expect(Tokens.LeftBrace);
+        AST t = new SelectBlockTree();
+        //TODO: There must be at least one selector
+        while (isNextTok(Tokens.LeftBracket)) {
+            t.addKid(rSelector());
+        }
+        expect(Tokens.RightBrace);
+        return t;
+    }
+
+    /**
      * Blocks:
      * BLOCK -> '{' D* S* '}'
      *
@@ -169,7 +209,7 @@ public class Parser {
     }
 
     boolean startingDecl() {
-        return isNextTok(Tokens.Int) || isNextTok(Tokens.BOOLean);
+        return isNextTok(Tokens.Int) || isNextTok(Tokens.BOOLean) || isNextTok(Tokens.StringType) || isNextTok(Tokens.HexType);
     }
 
     boolean startingStatement() {
@@ -177,13 +217,14 @@ public class Parser {
                 isNextTok(Tokens.While) ||
                 isNextTok(Tokens.Return) ||
                 isNextTok(Tokens.LeftBrace) ||
-                isNextTok(Tokens.Identifier));
+                isNextTok(Tokens.Identifier)) ||
+                isNextTok(Tokens.Unless) ||
+                isNextTok(Tokens.Select);
     }
 
     /**
      * Variable Declaration:
      * D -> TYPE NAME
-     *
      * Function Declaration:
      * D -> TYPE NAME FUNHEAD BLOCK
      *
@@ -212,19 +253,28 @@ public class Parser {
      * Types:
      * TYPE -> 'int'
      * TYPE -> 'boolean'
+     * TYPE -> 'string'
+     * TYPE -> 'hex'
      *
-     * @return either the intType or boolType tree
+     * @return the intType, boolType, stringType or hexType tree
      * @exception SyntaxError - thrown for any syntax error
      */
     public AST rType() throws SyntaxError {
         AST t;
-
         if (isNextTok(Tokens.Int)) {
             t = new IntTypeTree();
             scan();
-        } else {
+        } else if (isNextTok(Tokens.BOOLean)){
             expect(Tokens.BOOLean);
             t = new BoolTypeTree();
+        }
+        else if (isNextTok(Tokens.HexType)) {
+            t = new HexTypeTree();
+            scan();
+        }
+        else {
+            t = new StringTypeTree();
+            scan();
         }
         return t;
     }
@@ -261,11 +311,12 @@ public class Parser {
 
     /**
      * Statements:
-     * S -> 'if' E 'then' BLOCK 'else' BLOCK
-     * S -> 'while' E BLOCK
-     * S -> 'return' E
-     * S -> BLOCK
-     * S -> NAME '=' E
+     * S -> 'if' E 'then' BLOCK 'else' BLOCK <br>
+     * S -> 'if' E 'then' BLOCK
+     * S -> 'while' E BLOCK <br>
+     * S -> 'return' E <br>
+     * S -> BLOCK <br>
+     * S -> NAME '=' E <br>
      *
      * @return the tree corresponding to the statement found
      * @exception SyntaxError - thrown for any syntax error
@@ -282,9 +333,23 @@ public class Parser {
             expect(Tokens.Then);
             t.addKid(rBlock());
 
-            expect(Tokens.Else);
-            t.addKid(rBlock());
+            //for just adding support for if and else and not else if then do following:
+//            if (isNextTok(Tokens.Else)) { // check if there is an else block
+//                scan();
+//                t.addKid(rBlock());
+//            }
+
+            //If the next token is an else block only then it will scan and add the next token
+            if (isNextTok(Tokens.Else)) {
+                scan();
+                if (isNextTok(Tokens.If)) {
+                    t.addKid(rStatement()); // recursive call for if-else-if block
+                } else {
+                    t.addKid(rBlock()); // else block
+                }
+            }
             return t;
+
         } else if (isNextTok(Tokens.While)) {
             scan();
             t = new WhileTree();
@@ -302,6 +367,18 @@ public class Parser {
             return t;
         } else if (isNextTok(Tokens.LeftBrace)) {
             return rBlock();
+        } else if (isNextTok(Tokens.Unless)) {
+            scan();
+            t = new UnlessTree();
+            t.addKid(rExpr());
+            expect(Tokens.Then);
+            t.addKid(rBlock());
+            return t;
+        } else if (isNextTok(Tokens.Select)) {
+            scan();
+            t = new SelectTree();
+//            t.addKid(rName());
+            t.addKid(rSelectBlock());
         }
 
         t = rName();
@@ -321,6 +398,8 @@ public class Parser {
      * E -> SE '!=' SE
      * E -> SE '<' SE
      * E -> SE '<=' SE
+     * E -> SE > SE
+     * E -> SE >= SE
      *
      * @return the tree corresponding to the expression
      * @exception SyntaxError - thrown for any syntax error
@@ -370,6 +449,7 @@ public class Parser {
      * T -> F
      * T -> T '*' F
      * T -> T '/' F
+     * T -> T '%' F
      * T -> T '&' F
      *
      * This rule indicates we should pick up as many Factors as
@@ -396,6 +476,8 @@ public class Parser {
      * F -> '(' E ')'
      * F -> NAME
      * F -> <int>
+     * F -> <string>
+     * F -> <hex>
      * F -> NAME '(' (E list ',')? ')'
      *
      * @return the tree corresponding to the factor expression
@@ -414,6 +496,18 @@ public class Parser {
         // -> <int>
         else if (isNextTok(Tokens.INTeger)) {
             t = new IntTree(currentToken);
+            scan();
+            return t;
+        }
+        // -> <string>
+        else if (isNextTok(Tokens.StringLit)) {
+            t = new StringTree(currentToken);
+            scan();
+            return t;
+        }
+        // -> <hex>
+        else if (isNextTok(Tokens.HexLit)) {
+            t = new HexTree(currentToken);
             scan();
             return t;
         }

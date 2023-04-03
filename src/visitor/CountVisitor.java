@@ -171,4 +171,28 @@ public class CountVisitor extends ASTVisitor {
         count(t);
         return null;
     }
+
+    @Override
+    public Object visitUnlessTree(AST t) {
+        count(t);
+        return null;
+    }
+
+    @Override
+    public Object visitSelectTree(AST t) {
+        count(t);
+        return null;
+    }
+
+    @Override
+    public Object visitSelectBlockTree(AST t) {
+        count(t);
+        return null;
+    }
+
+    @Override
+    public Object visitSelectorTree(AST t) {
+        count(t);
+        return null;
+    }
 }

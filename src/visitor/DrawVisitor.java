@@ -240,4 +240,28 @@ public class DrawVisitor extends ASTVisitor {
         draw("MultOp: " + ((MultOpTree) t).getSymbol().toString(), t);
         return null;
     }
+
+    @Override
+    public Object visitUnlessTree(AST t) {
+        draw("Unless: " + ((MultOpTree) t).getSymbol().toString(), t);
+        return null;
+    }
+
+    @Override
+    public Object visitSelectTree(AST t) {
+        draw("Select: " + ((MultOpTree) t).getSymbol().toString(), t);
+        return null;
+    }
+
+    @Override
+    public Object visitSelectBlockTree(AST t) {
+        draw("SelectBlock: " + ((MultOpTree) t).getSymbol().toString(), t);
+        return null;
+    }
+
+    @Override
+    public Object visitSelectorTree(AST t) {
+        draw("Selector: " + ((MultOpTree) t).getSymbol().toString(), t);
+        return null;
+    }
 }

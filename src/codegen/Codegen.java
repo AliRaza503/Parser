@@ -383,6 +383,49 @@ public class Codegen extends ASTVisitor {
         return null;
     }
 
+
+    //TODO: NOT YET IMPLEMENTED
+    @Override
+    public Object visitUnlessTree(AST t) {
+        // System.out.println("visitUnlessTree");
+        String elseLabel = newLabel("else"), continueLabel = newLabel("continue");
+
+        // gen code for conditional expr
+        t.getKid(1).accept(this);
+        storeop(new LabelOpcode(Codes.ByteCodes.FALSEBRANCH, elseLabel));
+
+        t.getKid(2).accept(this);
+
+        storeop(new LabelOpcode(Codes.ByteCodes.LABEL, continueLabel));
+
+        return null;
+    }
+
+    @Override
+    public Object visitSelectTree(AST t) {
+        // System.out.println("visitSelectTree");
+//        String continueLabel = newLabel("continue");
+//
+//        // generate codes for the selector expressions
+//        t.getKid(1).accept(this);
+//
+//        // generate codes for the blocks
+//        rSelectBlock(t.getKid(2), continueLabel);
+//
+//        storeop(new LabelOpcode(Codes.ByteCodes.LABEL, continueLabel));
+
+        return null;
+    }
+    @Override
+    public Object visitSelectBlockTree(AST t) {
+        return null;
+    }
+
+    @Override
+    public Object visitSelectorTree(AST t) {
+        return null;
+    }
+
     /**
      * Generate codes for the While tree:
      *
@@ -546,4 +589,5 @@ public class Codegen extends ASTVisitor {
 
         return null;
     }
+
 }
