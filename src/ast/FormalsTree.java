@@ -9,4 +9,8 @@ public class FormalsTree extends AST {
     public Object accept(ASTVisitor visitor) {
         return visitor.visitFormalsTree(this);
     }
+
+    public Object accept(OffsetVisitor v) {
+        return v.visitFormalsTree(this);
+    }
 }

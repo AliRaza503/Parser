@@ -9,4 +9,8 @@ public class DeclTree extends AST {
     public Object accept(ASTVisitor visitor) {
         return visitor.visitDeclTree(this);
     }
+
+    public Object accept(OffsetVisitor v) {
+        return v.visitDeclTree(this);
+    }
 }

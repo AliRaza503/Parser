@@ -1,4 +1,4 @@
-package lexer.readers;
+package lexer.reader;
 
 import java.io.*;
 
@@ -14,8 +14,34 @@ public class SourceReader implements IReader {
     private int lineNumber = 1;
     // position of last character processed
     private int column = -1;
+
+    public static String allChars = "";
     private StringBuffer currentLine = new StringBuffer();
     private boolean completedLine = false;
+
+    private void readFileAtOnce(String sourceFile) {
+        try {
+            File file = new File(sourceFile);
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            StringBuilder sb = new StringBuilder();
+            String line;
+            int lineNumber = 1;
+            while ((line = br.readLine()) != null) {
+                if (line.equals("")) {
+                    sb.append(String.format("%3d:%s\n", lineNumber, line));
+                } else {
+                    sb.append(String.format("%3d: %s\n", lineNumber, line));
+                }
+                lineNumber++;
+            }
+            sb.deleteCharAt(sb.length()-1);
+            allChars = sb.toString();
+            br.close();
+        } catch (IOException e) {
+            System.out.println("An error occurred: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 
     /**
      * Construct a new SourceReader
@@ -25,8 +51,7 @@ public class SourceReader implements IReader {
      */
     public SourceReader(String sourceFile) throws IOException {
         this(new BufferedReader(new FileReader(sourceFile)));
-        System.out.println("Source file: " + sourceFile);
-        System.out.println("user.dir: " + System.getProperty("user.dir"));
+        readFileAtOnce(sourceFile);
     }
 
     public SourceReader(BufferedReader reader) throws IOException {

@@ -18,6 +18,9 @@ public class MultOpTree extends AST {
     public Object accept(ASTVisitor visitor) {
         return visitor.visitMultOpTree(this);
     }
+    public Object accept(OffsetVisitor visitor) {
+        return visitor.visitMultOpTree(this);
+    }
 
     public Symbol getSymbol() {
         return symbol;

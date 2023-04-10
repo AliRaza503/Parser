@@ -9,4 +9,8 @@ public class IntTypeTree extends AST {
     public Object accept(ASTVisitor visitor) {
         return visitor.visitIntTypeTree(this);
     }
+
+    public Object accept(OffsetVisitor v) {
+        return v.visitIntTypeTree(this);
+    }
 }

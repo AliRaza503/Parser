@@ -21,6 +21,10 @@ public class IdTree extends AST {
         return visitor.visitIdTree(this);
     }
 
+    public Object accept(OffsetVisitor v) {
+        return v.visitIdTree(this);
+    }
+
     public Symbol getSymbol() {
         return symbol;
     }

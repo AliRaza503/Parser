@@ -16,6 +16,10 @@ public class AddOpTree extends AST {
         return visitor.visitAddOpTree(this);
     }
 
+    public Object accept(OffsetVisitor v) {
+        return v.visitAddOpTree(this);
+    }
+
     public Symbol getSymbol() {
         return symbol;
     }

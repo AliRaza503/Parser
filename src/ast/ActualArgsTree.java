@@ -9,4 +9,8 @@ public class ActualArgsTree extends AST {
     public Object accept(ASTVisitor visitor) {
         return visitor.visitActualArgsTree(this);
     }
+
+    public Object accept(OffsetVisitor v) {
+        return v.visitAssignTree(this);
+    }
 }

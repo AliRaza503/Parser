@@ -1,6 +1,8 @@
 package parser;
 
 import ast.*;
+
+import java.io.PrintStream;
 import java.util.*;
 import lexer.*;
 
@@ -172,8 +174,11 @@ public class Parser {
      */
     public AST rSelectBlock() throws SyntaxError {
         expect(Tokens.LeftBrace);
+        //There must be at least one selector
+        if (!isNextTok(Tokens.LeftBracket)) {
+            throw new SyntaxError(currentToken, Tokens.LeftBracket);
+        }
         AST t = new SelectBlockTree();
-        //TODO: There must be at least one selector
         while (isNextTok(Tokens.LeftBracket)) {
             t.addKid(rSelector());
         }
@@ -379,6 +384,7 @@ public class Parser {
             t = new SelectTree();
 //            t.addKid(rName());
             t.addKid(rSelectBlock());
+            return t;
         }
 
         t = rName();
@@ -611,12 +617,5 @@ public class Parser {
 
     private void scan() {
         currentToken = lex.nextToken();
-
-        // This is debug printout (and should not appear in final submission)
-        if (currentToken != null) {
-            currentToken.print();
-        }
-
-        return;
     }
 }

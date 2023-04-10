@@ -22,6 +22,10 @@ public class HexTree extends AST {
         return visitor.visitHexTree(this);
     }
 
+    public Object accept(OffsetVisitor v) {
+        return v.visitHexTree(this);
+    }
+
     public Symbol getSymbol() {
         return symbol;
     }

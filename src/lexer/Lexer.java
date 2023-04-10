@@ -1,7 +1,7 @@
 package lexer;
 
-import lexer.readers.IReader;
-import lexer.readers.SourceReader;
+import lexer.reader.IReader;
+import lexer.reader.SourceReader;
 
 /**
  * The Lexer class is responsible for scanning the source file
@@ -17,6 +17,7 @@ public class Lexer implements ILexer {
     // next character to process
     private char ch;
     private IReader source;
+
     private int lineNo = 1;
 
     // positions in line of current token
@@ -29,6 +30,10 @@ public class Lexer implements ILexer {
      */
     public Lexer(String sourceFile) throws Exception {
         this(new SourceReader(sourceFile));
+    }
+    @Override
+    public String toString() {
+        return SourceReader.allChars;
     }
 
     public Lexer(IReader reader) throws Exception {
@@ -48,8 +53,9 @@ public class Lexer implements ILexer {
 
     private void scanPastWhitespace() {
         while (Character.isWhitespace(ch) && !eofReached()) {
-            if (ch == '\n')
+            if (ch == '\n') {
                 lineNo++;
+            }
             nextChar();
         }
     }

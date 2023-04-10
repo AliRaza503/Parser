@@ -9,4 +9,7 @@ public class ReturnTree extends AST {
     public Object accept(ASTVisitor visitor) {
         return visitor.visitReturnTree(this);
     }
+    public Object accept(OffsetVisitor visitor) {
+        return visitor.visitReturnTree(this);
+    }
 }

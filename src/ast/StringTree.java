@@ -21,6 +21,9 @@ public class StringTree extends AST {
     public Object accept(ASTVisitor visitor) {
         return visitor.visitStringTree(this);
     }
+    public Object accept(OffsetVisitor visitor) {
+        return visitor.visitStringTree(this);
+    }
 
     public Symbol getSymbol() {
         return symbol;

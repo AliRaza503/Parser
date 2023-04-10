@@ -6,7 +6,7 @@ import ast.*;
  *  ASTVisitor class is the root of the Visitor hierarchy for visiting
  *  various AST's; each visitor asks each node in the AST it is given
  *  to <i>accept</i> its visit;
- *  each subclass <b>must</b> provide all of the visitors mentioned
+ *  each subclass <b>must</b> provide all the visitors mentioned
  *  in this class;
  *  after visiting a tree the visitor can return any Object of interest<br>
  *  e.g. when the constrainer visits an expression tree it will return
@@ -18,8 +18,6 @@ public abstract class ASTVisitor {
         for (AST kid : t.getKids()) {
             kid.accept(this);
         }
-
-        return;
     }
 
     public abstract Object visitProgramTree(AST t);

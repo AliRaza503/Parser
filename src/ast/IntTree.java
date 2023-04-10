@@ -22,6 +22,10 @@ public class IntTree extends AST {
         return visitor.visitIntTree(this);
     }
 
+    public Object accept(OffsetVisitor v) {
+        return v.visitIntTree(this);
+    }
+
     public Symbol getSymbol() {
         return symbol;
     }

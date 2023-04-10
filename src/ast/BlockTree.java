@@ -9,4 +9,8 @@ public class BlockTree extends AST {
     public Object accept(ASTVisitor visitor) {
         return visitor.visitBlockTree(this);
     }
+
+    public Object accept(OffsetVisitor v) {
+        return v.visitBlockTree(this);
+    }
 }

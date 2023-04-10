@@ -9,4 +9,7 @@ public class SelectTree extends AST {
     public Object accept(ASTVisitor visitor) {
         return visitor.visitSelectTree(this);
     }
+    public Object accept(OffsetVisitor visitor) {
+        return visitor.visitSelectTree(this);
+    }
 }

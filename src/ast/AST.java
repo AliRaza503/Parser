@@ -13,17 +13,39 @@ import visitor.*;
 public abstract class AST {
 
     protected ArrayList<AST> kids;
+    private static boolean calledOnce = false, secCall = true;
+    private static AST parent;
     protected int nodeNum;
     protected AST decoration;
     // label for generated code of tree
     protected String label = "";
 
+    protected AST parentNode = null;
     public static int NodeCount = 0;
 
     public AST() {
+        if (!calledOnce) {
+            calledOnce = true;
+            parent = this;
+            secCall = false;
+        }
+        else if (!secCall) {
+            secCall = true;
+            parentNode = parent;
+        }
         kids = new ArrayList<AST>();
         NodeCount++;
         nodeNum = NodeCount;
+    }
+    public int depth() {
+        int maxDepth = 0;
+        for (AST kid : kids) {
+            int kidDepth = kid.depth();
+            if (kidDepth > maxDepth) {
+                maxDepth = kidDepth;
+            }
+        }
+        return maxDepth + 1;
     }
 
     public void setDecoration(AST t) {
@@ -70,7 +92,10 @@ public abstract class AST {
      */
     public abstract Object accept(ASTVisitor v);
 
+    public abstract Object accept(OffsetVisitor v);
+
     public AST addKid(AST kid) {
+        kid.parentNode = this;
         kids.add(kid);
         return this;
     }
@@ -81,5 +106,18 @@ public abstract class AST {
 
     public String getLabel() {
         return label;
+    }
+
+    public int getLevel(){
+        int level = 0;
+        AST parent = this;
+        while (parent != null) {
+            level++;
+            parent = parent.getParent();
+        }
+        return level;
+    }
+    private AST getParent(){
+        return this.parentNode;
     }
 }

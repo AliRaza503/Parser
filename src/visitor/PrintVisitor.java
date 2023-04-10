@@ -173,7 +173,7 @@ public class PrintVisitor extends ASTVisitor {
 
     @Override
     public Object visitStringTree(AST t) {
-        print("String: " + ((HexTree) t).getSymbol().toString(), t);
+        print("String: " + ((StringTree) t).getSymbol().toString(), t);
         return null;
     }
 

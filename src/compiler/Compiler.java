@@ -78,7 +78,7 @@ public class Compiler {
             CountVisitor countVisitor = new CountVisitor();
             ast.accept(countVisitor);
 
-            DrawVisitor drawVisitor = new DrawVisitor(countVisitor.getCount());
+            DrawOffsetVisitor drawVisitor = new DrawOffsetVisitor(countVisitor.getCount());
             ast.accept(drawVisitor);
 
             try {

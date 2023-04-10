@@ -185,7 +185,7 @@ public class OutputTest {
                     "30:       String: test string",
                     "32:     Assign",
                     "31:       Id: h",
-                    "33:       Hex0xabcdef",
+                    "33:       Hex: 0xabcdef",
                     "35:     Assign",
                     "34:       Id: result",
                     "37:       RelOp: >",

@@ -1,13 +1,13 @@
 package visitor;
 
 import ast.*;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
 /**
- *
  * @author Lowell Milliken
  */
 public class DrawVisitor extends ASTVisitor {
@@ -66,21 +66,10 @@ public class DrawVisitor extends ASTVisitor {
         g2.setColor(Color.black);
 
         for (int i = 0; i < t.kidCount(); i++) {
-            endx = width /
-                    2 +
-                    (progress[depth + 1] + i) *
-                            hstep
-                    -
-                    nCount[depth + 1] *
-                            hstep /
-                            2
-                    +
-                    nodew /
-                            2;
+            endx = width / 2 + (progress[depth + 1] + i) * hstep - nCount[depth + 1] * hstep / 2 + nodew / 2;
             endy = (depth + 1) * vstep;
             g2.drawLine(startx, starty, endx, endy);
         }
-
         progress[depth]++;
         depth++;
         visitKids(t);
@@ -243,25 +232,25 @@ public class DrawVisitor extends ASTVisitor {
 
     @Override
     public Object visitUnlessTree(AST t) {
-        draw("Unless: " + ((MultOpTree) t).getSymbol().toString(), t);
+        draw("Unless: ", t);
         return null;
     }
 
     @Override
     public Object visitSelectTree(AST t) {
-        draw("Select: " + ((MultOpTree) t).getSymbol().toString(), t);
+        draw("Select: ", t);
         return null;
     }
 
     @Override
     public Object visitSelectBlockTree(AST t) {
-        draw("SelectBlock: " + ((MultOpTree) t).getSymbol().toString(), t);
+        draw("SelectBlock: ", t);
         return null;
     }
 
     @Override
     public Object visitSelectorTree(AST t) {
-        draw("Selector: " + ((MultOpTree) t).getSymbol().toString(), t);
+        draw("Selector: ", t);
         return null;
     }
 }

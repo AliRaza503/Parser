@@ -9,4 +9,7 @@ public class WhileTree extends AST {
     public Object accept(ASTVisitor visitor) {
         return visitor.visitWhileTree(this);
     }
+    public Object accept(OffsetVisitor visitor) {
+        return visitor.visitWhileTree(this);
+    }
 }

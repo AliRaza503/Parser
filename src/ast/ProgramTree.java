@@ -9,4 +9,7 @@ public class ProgramTree extends AST {
     public Object accept(ASTVisitor visitor) {
         return visitor.visitProgramTree(this);
     }
+    public Object accept(OffsetVisitor visitor) {
+        return visitor.visitProgramTree(this);
+    }
 }

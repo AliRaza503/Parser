@@ -1,4 +1,4 @@
-package lexer.readers;
+package lexer.reader;
 
 public interface IReader {
     public char read();

@@ -9,4 +9,8 @@ public class IfTree extends AST {
     public Object accept(ASTVisitor visitor) {
         return visitor.visitIfTree(this);
     }
+
+    public Object accept(OffsetVisitor v) {
+        return v.visitIfTree(this);
+    }
 }

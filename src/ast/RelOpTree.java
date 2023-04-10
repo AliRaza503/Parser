@@ -18,6 +18,9 @@ public class RelOpTree extends AST {
     public Object accept(ASTVisitor visitor) {
         return visitor.visitRelOpTree(this);
     }
+    public Object accept(OffsetVisitor visitor) {
+        return visitor.visitRelOpTree(this);
+    }
 
     public Symbol getSymbol() {
         return symbol;
